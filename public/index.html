@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KayFlux</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="kf-nav-brand" data-view="cco-hub" onclick="navigate('cco-hub')" style="cursor:pointer">
+      <div class="kf-nav-logo">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" fill="#0d0d0d"/><rect x="7" y="1" width="4" height="4" fill="#0d0d0d"/><rect x="1" y="7" width="4" height="4" fill="#0d0d0d"/><rect x="7" y="7" width="4" height="4" fill="#0d0d0d"/></svg>
+      </div>
+      <div class="kf-wordmark">Kay<span>Flux</span></div>
+    </div>
+    <nav id="main-nav">
+      <button data-view="roster">Roster</button>
+      <button data-view="divisions">Divisions</button>
+      <button data-view="tag-teams">Tag Teams</button>
+      <button data-view="events">Events</button>
+      <button data-view="championships">Championships</button>
+      <button data-view="rivalries">Rivalries</button>
+      <button data-view="guides">Guides</button>
+    </nav>
+    <div class="kf-season-pill" id="season-badge">Season 1</div>
+  </header>
+  <main id="app"></main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="app.js"></script>
+  <script src="views/roster.js"></script>
+  <script src="views/divisions.js"></script>
+  <script src="views/tag-teams.js"></script>
+  <script src="views/events.js"></script>
+  <script src="views/match-card.js"></script>
+  <script src="views/championships.js"></script>
+  <script src="views/rivalries.js"></script>
+  <script src="views/notes.js"></script>
+  <script src="views/guides.js"></script>
+  <script src="views/brand-hub.js"></script>
+  <script src="views/brand-log.js"></script>
+  <script src="views/settings.js"></script>
+  <script src="views/cco-hub.js"></script>
+</body>
+</html>
