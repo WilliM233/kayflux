@@ -8,12 +8,19 @@ const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'app.db');
 
 // Create DB and schema if not exists
 if (!fs.existsSync(DB_PATH)) {
+  const dbDir = path.dirname(path.resolve(DB_PATH));
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
+  console.log(`[KayFlux] Creating new database at ${DB_PATH}`);
   const freshDb = new Database(DB_PATH);
   freshDb.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
-  // Seed default data (roster, championships, brands, etc.)
   const seedDefault = require('./seed-default');
   seedDefault(freshDb);
   freshDb.close();
+  console.log('[KayFlux] Database created and seeded successfully');
+} else {
+  console.log(`[KayFlux] Using existing database at ${DB_PATH}`);
 }
 
 const db = new Database(DB_PATH);
