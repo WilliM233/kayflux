@@ -3,7 +3,7 @@ const { parse } = require('csv-parse/sync');
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'app.db');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'app.db');
 const EXTRACTED_DIR = path.join(__dirname, '_extracted');
 
 // ============================================================

@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const DB_PATH = path.join(__dirname, 'app.db');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'app.db');
 
 // Create DB and schema if not exists
 if (!fs.existsSync(DB_PATH)) {
