@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 # Copy application code
-COPY server.js schema.sql seed.js start-session.js ./
+COPY server.js schema.sql seed.js seed-default.js start-session.js ./
 COPY public/ ./public/
 
 # Database lives in a volume so it persists across container restarts

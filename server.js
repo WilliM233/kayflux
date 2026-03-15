@@ -8,9 +8,12 @@ const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'app.db');
 
 // Create DB and schema if not exists
 if (!fs.existsSync(DB_PATH)) {
-  const db = new Database(DB_PATH);
-  db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
-  db.close();
+  const freshDb = new Database(DB_PATH);
+  freshDb.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
+  // Seed default data (roster, championships, brands, etc.)
+  const seedDefault = require('./seed-default');
+  seedDefault(freshDb);
+  freshDb.close();
 }
 
 const db = new Database(DB_PATH);
