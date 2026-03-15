@@ -1,5 +1,5 @@
 {
-  "name": "wwe-universe-manager",
+  "name": "kayflux",
   "version": "1.0.0",
   "description": "WWE 2K26 Universe Mode booking manager — offline-first, SQLite-backed",
   "main": "server.js",
