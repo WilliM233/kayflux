@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# SQLite database files
+app.db
+app.db-shm
+app.db-wal
+
+# Session cache
+session-cache.json
+
+# Extracted data (Notion exports)
+_extracted/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.*
