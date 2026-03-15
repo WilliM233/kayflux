@@ -1185,6 +1185,51 @@ app.delete('/api/show-templates/:id', (req, res) => {
 });
 
 // ============================================================
+// Schema + Query (utility endpoints for MCP)
+// ============================================================
+app.get('/api/schema', (req, res) => {
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all();
+  const schema = {};
+  for (const { name } of tables) {
+    const cols = db.prepare(`PRAGMA table_info(${name})`).all();
+    schema[name] = cols.map(c => ({
+      name: c.name,
+      type: c.type,
+      notnull: c.notnull === 1,
+      pk: c.pk === 1,
+      default: c.dflt_value
+    }));
+  }
+  res.json(schema);
+});
+
+app.post('/api/query', (req, res) => {
+  const { sql } = req.body;
+  if (!sql) return res.status(400).json({ error: 'sql is required' });
+
+  const upper = sql.trim().toUpperCase();
+  if (!upper.startsWith('SELECT')) {
+    return res.status(400).json({ error: 'Only SELECT queries are allowed' });
+  }
+  if (sql.includes(';')) {
+    return res.status(400).json({ error: 'Multi-statement queries are not allowed' });
+  }
+  const forbidden = ['INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', 'CREATE'];
+  for (const kw of forbidden) {
+    if (upper.includes(kw)) {
+      return res.status(400).json({ error: `${kw} is not allowed in read-only queries` });
+    }
+  }
+
+  try {
+    const rows = db.prepare(sql).all();
+    res.json({ rows, count: rows.length });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// ============================================================
 // SPA fallback
 // ============================================================
 app.get('*', (req, res) => {

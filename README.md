@@ -12,8 +12,8 @@ KayFlux is a local-first WWE 2K Universe Mode booking manager built with Node.js
 - **Multi-Brand Roster Management** — 280+ superstars across Raw, SmackDown, and NXT with division assignments, contender rankings, alignment tracking, and detailed profiles
 - **Championship Tracking** — 16 active titles (plus 27 legacy championships) with reign history, automatic champion transitions, and vacancy management
 - **Event Booking** — Create weekly shows, PPVs, and special events; build match cards with drag-and-drop ordering; record results with win methods and star ratings
-- **Rivalry System** — Track feuds through lifecycle stages (Pending → Building → Active → Climax → Resolved) with intensity levels, slot limits per brand, and eligibility checks
-- **Tag Teams & Stables** — Manage tag teams, stables, and mixed tags with member roles, parent/child relationships (stable → sub-unit tag teams), and team records
+- **Rivalry System** — Track feuds through lifecycle stages (Pending > Building > Active > Climax > Resolved) with intensity levels, slot limits per brand, and eligibility checks
+- **Tag Teams & Stables** — Manage tag teams, stables, and mixed tags with member roles, parent/child relationships (stable > sub-unit tag teams), and team records
 - **Division Rankings** — Organize superstars into divisions (World, Midcard, Tag, Women's) with ranked contender positions and champion designation
 - **Brand Hubs** — Per-brand dashboards showing roster, active rivalries, recent results, and championship landscape
 - **Session Log** — GM notes, booking decisions, storyline updates, locker room reports, and CCO mandates as a running narrative journal
@@ -40,8 +40,8 @@ KayFlux is a local-first WWE 2K Universe Mode booking manager built with Node.js
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd wweuniversethingy
+git clone https://github.com/WilliM233/kayflux.git
+cd kayflux
 
 # Install dependencies
 npm install
@@ -52,14 +52,55 @@ node server.js
 
 The app will be available at **http://localhost:3000**.
 
-The SQLite database (`universe.db`) is created automatically on first run with all tables, seed data (superstars, championships, show templates, brands), and migrations applied.
+The SQLite database (`app.db`) is created automatically on first run with all tables, default seed data (279 superstars, 43 championships, 33 show templates, 4 brands, 5 guides), and migrations applied.
+
+### Seeding from CSV
+
+To import roster data from CSV files (Notion exports, etc.):
+
+```bash
+# Place CSV files in _extracted/ directory, then:
+npm run seed
+```
+
+## Docker Deployment
+
+KayFlux includes a Dockerfile for containerized deployment (e.g., TrueNAS, Unraid, or any Docker host).
+
+```bash
+# Build the image
+docker build -t kayflux .
+
+# Run the container
+docker run -d \
+  --name kayflux \
+  -p 3000:3000 \
+  -v kayflux-data:/data \
+  kayflux
+```
+
+- The database is stored in a Docker volume at `/data/app.db` so it persists across container restarts
+- Port 3000 is exposed by default
+- On first run, the database is auto-created and seeded with the full WWE roster
+
+To update a running container:
+
+```bash
+docker stop kayflux && docker rm kayflux
+docker build -t kayflux .
+docker run -d --name kayflux -p 3000:3000 -v kayflux-data:/data kayflux
+```
 
 ## Project Structure
 
 ```
-wweuniversethingy/
+kayflux/
 ├── server.js                  # Express server, API routes, DB migrations
-├── universe.db                # SQLite database (auto-created)
+├── schema.sql                 # SQLite database schema
+├── seed.js                    # CSV-based data seeding script
+├── seed-default.js            # Default roster/championship seed (first run)
+├── start-session.js           # Session management utility
+├── Dockerfile                 # Docker containerization config
 ├── package.json
 ├── CLAUDE.md                  # AI assistant reference (API docs, schema)
 ├── README.md
@@ -68,6 +109,7 @@ wweuniversethingy/
     ├── styles.css             # KayFlux Arena Dark theme + all components
     ├── app.js                 # Router, view registry, shared utilities
     └── views/
+        ├── cco-hub.js         # CCO Command Hub (home page)
         ├── roster.js          # Roster browser with filters
         ├── divisions.js       # Division rankings manager
         ├── tag-teams.js       # Tag teams, stables, mixed tags
@@ -78,8 +120,8 @@ wweuniversethingy/
         ├── guides.js          # Markdown guide viewer
         ├── brand-hub.js       # Per-brand dashboard
         ├── brand-log.js       # Brand session log
-        ├── cco-hub.js         # CCO Command Hub (home page)
-        └── notes.js           # Notes/profile editor
+        ├── notes.js           # Notes/profile editor
+        └── settings.js        # Settings panel
 ```
 
 ## Theme: KayFlux Arena Dark
@@ -91,13 +133,6 @@ The UI uses a custom dark theme with a three-tier color hierarchy:
 | **CCO Gold** | Authority elements — nav indicators, panel headers, mandate bars, vacant badges | `#c9a84c` (gold) |
 | **Brand Identity** | Brand-specific elements — card accents, brand pills, roster headers | Raw `#c8102e`, SmackDown `#0066cc`, NXT `#e8c000`, Cross-Brand `#7b2d8b` |
 | **System Content** | Body text, borders, surfaces, interactive states | `#f0ede8` (text), `#888` (muted), `#0d0d0d` (background) |
-
-Design principles:
-- 0.5px borders throughout (never 1px, except 2px brand card top accents)
-- No drop shadows, no blur, no gradients (except PLE card treatment)
-- Tinted pill-style badges with semi-transparent backgrounds
-- Gold is reserved for CCO authority — never used on body text or brand elements
-- NXT Yellow (`#e8c000`) ≠ CCO Gold (`#c9a84c`) — intentionally distinct
 
 ## API Overview
 
@@ -113,31 +148,18 @@ The app exposes a full REST API at `http://localhost:3000/api/`. All endpoints r
 | Tag Teams | `/api/tag-teams` | CRUD, member management |
 | Rivalries | `/api/rivalries` | CRUD, active participants view |
 | Divisions | `/api/divisions` | Rankings, reorder |
-| Guides | `/api/guides` | Read, update (markdown) |
-| Session Log | `/api/session-log` | Create, filtered list |
+| Guides | `/api/guides` | CRUD (markdown content) |
+| Session Log | `/api/session-log` | CRUD, filtered list |
 | Seasons | `/api/seasons` | List, current |
+| Show Templates | `/api/show-templates` | CRUD |
+| Schema | `/api/schema` | Database schema introspection |
+| Query | `/api/query` | Read-only SQL (SELECT only) |
 
 For full API documentation with request/response schemas, see [CLAUDE.md](./CLAUDE.md).
 
-## Database
+## MCP Integration
 
-SQLite database with 16 tables and 2 derived views. Key relationships:
-
-- **Superstars** belong to a **Brand** and are assigned to a **Division** with a rank
-- **Championships** link to brands via a junction table (`championship_brands`) for cross-brand titles
-- **Tag Teams** can have a `parent_team_id` linking sub-unit tag teams to their parent stable
-- **Rivalries** have participants with roles (challenger/champion) and slot limits (4 per brand)
-- **Events** contain **Matches** which have **Participants** with results (win/loss/draw)
-- **Championship History** tracks reign transitions with event references
-
-## Current Universe State
-
-- **Season 1** — currently in progress
-- **3 Brands** — Raw, SmackDown, NXT (plus Cross-Brand for shared titles)
-- **162 active superstars** across all brands + 114 legends in the database
-- **16 active championships** with 1 current title holder (Bronson Reed — IC Champion)
-- **8 active rivalries** across all brands
-- **14 events** scheduled for Season 1
+KayFlux works with [kayflux-mcp](https://github.com/WilliM233/kayflux-mcp) — an MCP server that gives Claude (Desktop or Code) full read/write access to your universe via 54 tools. See that repo for setup instructions.
 
 ## License
 
