@@ -160,7 +160,3 @@ For full API documentation with request/response schemas, see [CLAUDE.md](./CLAU
 ## MCP Integration
 
 KayFlux works with [kayflux-mcp](https://github.com/WilliM233/kayflux-mcp) — an MCP server that gives Claude (Desktop or Code) full read/write access to your universe via 54 tools. See that repo for setup instructions.
-
-## License
-
-Private project — not distributed.
