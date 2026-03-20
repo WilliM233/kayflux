@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Tray, Menu, shell, ipcMain, nativeImage } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, fork } = require('child_process');
 const http = require('http');
 const fs = require('fs');
 
@@ -71,20 +71,37 @@ function startServer() {
 
   const serverScript = path.join(serverDir, 'server.js');
 
-  // Use system Node.js (not Electron's) so native modules (better-sqlite3) work
-  // without needing to rebuild against Electron's Node ABI
-  const nodeBin = process.platform === 'win32' ? 'node.exe' : 'node';
-  serverProcess = spawn(nodeBin, [serverScript], {
-    cwd: serverDir,
-    env: {
-      ...process.env,
-      DB_PATH: dbPath,
-      PORT: String(port),
-      NODE_ENV: 'production'
-    },
-    stdio: ['ignore', 'pipe', 'pipe'],
-    shell: false
-  });
+  const serverEnv = {
+    ...process.env,
+    DB_PATH: dbPath,
+    PORT: String(port),
+    NODE_ENV: 'production'
+  };
+
+  if (app.isPackaged) {
+    // Packaged: use Electron's Node via fork(). Native modules (better-sqlite3)
+    // are compiled against Electron's headers by electron-builder install-app-deps.
+    // Set NODE_PATH so server.js can find modules from the app bundle.
+    const appUnpacked = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules');
+    const appPacked = path.join(process.resourcesPath, 'app.asar', 'node_modules');
+    serverEnv.NODE_PATH = [appUnpacked, appPacked].join(path.delimiter);
+
+    serverProcess = fork(serverScript, [], {
+      cwd: serverDir,
+      env: serverEnv,
+      silent: true
+    });
+  } else {
+    // Dev: use system Node.js — the parent repo's node_modules has native modules
+    // compiled for the system Node version
+    const nodeBin = process.platform === 'win32' ? 'node.exe' : 'node';
+    serverProcess = spawn(nodeBin, [serverScript], {
+      cwd: serverDir,
+      env: serverEnv,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      shell: false
+    });
+  }
 
   serverProcess.stdout.on('data', (data) => log(`[server] ${data}`));
   serverProcess.stderr.on('data', (data) => log(`[server:err] ${data}`));
