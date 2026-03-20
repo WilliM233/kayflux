@@ -14,15 +14,39 @@ KayFlux is a WWE 2K Universe Mode booking manager — a full-featured dashboard 
 
 ## Download KayFlux
 
-Grab the latest installer for your platform — no technical setup required.
+No technical knowledge needed — just download, install, and run.
 
-| Platform | Download |
-|----------|----------|
-| **Windows** | [KayFlux-Setup.exe](https://github.com/WilliM233/kayflux/releases/latest) |
-| **macOS** | [KayFlux.dmg](https://github.com/WilliM233/kayflux/releases/latest) |
-| **Linux** | [KayFlux.AppImage](https://github.com/WilliM233/kayflux/releases/latest) |
+### Step 1: Download the installer
 
-> **Note:** Windows may show a SmartScreen warning and macOS may show an unidentified developer warning — the app is not code-signed yet. Click "More info" → "Run anyway" (Windows) or right-click → "Open" (macOS).
+Go to the **[Releases page](https://github.com/WilliM233/kayflux/releases/latest)** and scroll down to **Assets**. Download the file for your platform:
+
+| Platform | File to download |
+|----------|-----------------|
+| **Windows** | `KayFlux-Setup-x.x.x.exe` |
+| **macOS** | `KayFlux-x.x.x.dmg` |
+| **Linux** | `KayFlux-x.x.x.AppImage` |
+
+### Step 2: Install
+
+**Windows:**
+1. Run the `.exe` file you downloaded
+2. Windows SmartScreen may pop up — click **"More info"** then **"Run anyway"** (the app isn't code-signed yet, this is normal)
+3. Follow the installer prompts — default settings are fine
+
+**macOS:**
+1. Open the `.dmg` file and drag KayFlux to your Applications folder
+2. The first time you open it, right-click the app → click **"Open"** → click **"Open"** again to bypass Gatekeeper
+
+**Linux:**
+1. Make the file executable: `chmod +x KayFlux-*.AppImage`
+2. Double-click the file or run it from a terminal
+
+### Step 3: Launch
+
+1. Open KayFlux — a small launcher window appears while the server starts up
+2. Once it says **"Running"**, click **"Open KayFlux →"** to open the dashboard in your browser
+3. You can close the launcher window — KayFlux keeps running in your **system tray** (look for the gold icon near your clock)
+4. Right-click the tray icon to reopen the launcher, restart, or quit
 
 KayFlux auto-updates — you'll get a notification when a new version is available.
 
@@ -46,34 +70,55 @@ KayFlux auto-updates — you'll get a notification when a new version is availab
 
 ## For Self-Hosters (Docker)
 
-If you run a home server (TrueNAS, Unraid, etc.), KayFlux is available as a Docker image on GitHub Container Registry.
+If you run a home server (TrueNAS, Unraid, Synology, etc.), KayFlux is available as a Docker image. No build step — just pull and run.
 
-### Quick start
+### First-time setup
+
+1. **SSH into your server** (or open a terminal/shell on it)
+
+2. **Create a folder** for KayFlux and download the compose file:
+   ```bash
+   mkdir -p /path/to/kayflux
+   cd /path/to/kayflux
+   curl -O https://raw.githubusercontent.com/WilliM233/kayflux/main/docker-compose.yml
+   ```
+
+3. **(Optional) Change the port** — the default is 3030. To use a different port:
+   ```bash
+   echo "KAYFLUX_PORT=8080" > .env
+   ```
+
+4. **Start KayFlux:**
+   ```bash
+   docker compose up -d
+   ```
+
+5. **Open your browser** and go to `http://<your-server-ip>:3030` — you should see the KayFlux dashboard.
+
+Your database is stored in a Docker volume and **persists across updates and restarts** — your data is safe.
+
+### Updating to a new version
+
+When a new version is released, updating is two commands:
 
 ```bash
-# Download the compose file
-curl -O https://raw.githubusercontent.com/WilliM233/kayflux/main/docker-compose.yml
-
-# Start KayFlux
-docker compose up -d
-```
-
-Open **http://your-server:3030** and you're live. The database persists in a Docker volume.
-
-### Update
-
-```bash
+cd /path/to/kayflux
 docker compose pull
 docker compose up -d
 ```
 
-### Configuration
+Your database is untouched — only the app code updates.
 
-Copy `.env.example` to `.env` to customize:
+### Backup
+
+Your database lives inside a Docker volume. To back it up:
 
 ```bash
-# Change the host port (default: 3030)
-KAYFLUX_PORT=3030
+# Find where the volume is stored
+docker volume inspect kayflux_kayflux-data | grep Mountpoint
+
+# Copy the database files to a safe location
+cp <mountpoint>/app.db /path/to/your/backups/app.db
 ```
 
 ---

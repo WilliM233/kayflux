@@ -404,7 +404,7 @@ app.on('second-instance', () => {
 });
 
 app.on('window-all-closed', () => {
-  // Don't quit — tray keeps running
+  app.quit();
 });
 
 app.on('before-quit', async () => {
