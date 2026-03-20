@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=420, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <title>KayFlux</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="launcher">
+    <div class="logo">
+      <span class="logo-kay">Kay</span><span class="logo-flux">Flux</span>
+    </div>
+    <div class="subtitle">WWE Universe Mode Manager</div>
+
+    <!-- Starting state -->
+    <div id="state-starting" class="state active">
+      <div class="status-indicator starting">
+        <span class="pulse"></span>
+        <span class="status-text">Starting KayFlux...</span>
+      </div>
+    </div>
+
+    <!-- Running state -->
+    <div id="state-running" class="state">
+      <div class="status-indicator running">
+        <span class="dot green"></span>
+        <span class="status-pill running">Running</span>
+      </div>
+      <button id="btn-open" class="btn-primary">Open KayFlux →</button>
+      <div id="port-display" class="port-text">localhost:3030</div>
+    </div>
+
+    <!-- Error state -->
+    <div id="state-error" class="state">
+      <div class="status-indicator error">
+        <span class="dot red"></span>
+        <span class="status-pill error">Error</span>
+      </div>
+      <div id="error-message" class="error-text"></div>
+      <div class="error-actions">
+        <button id="btn-retry" class="btn-primary">Retry</button>
+        <a id="btn-logs" href="#" class="link-muted">View Logs</a>
+      </div>
+    </div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

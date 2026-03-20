@@ -1,0 +1,54 @@
+appId: com.kayflux.app
+productName: KayFlux
+copyright: MIT
+
+directories:
+  output: dist
+
+files:
+  - main.js
+  - preload.js
+  - src/**/*
+  - assets/**/*
+  - package.json
+
+extraResources:
+  - from: ../server.js
+    to: server/server.js
+  - from: ../schema.sql
+    to: server/schema.sql
+  - from: ../seed-default.js
+    to: server/seed-default.js
+  - from: ../public
+    to: server/public
+  - from: ../package.json
+    to: server/package.json
+  - from: ../node_modules
+    to: server/node_modules
+
+win:
+  target: nsis
+  icon: assets/icon.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: assets/icon.ico
+
+mac:
+  target: dmg
+  icon: assets/icon.icns
+  category: public.app-category.sports-games
+
+dmg:
+  backgroundColor: "#0d0d0d"
+
+linux:
+  target: AppImage
+  icon: assets/icon.png
+  category: Game
+
+publish:
+  provider: github
+  owner: WilliM233
+  repo: kayflux

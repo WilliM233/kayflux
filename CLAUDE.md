@@ -1,3 +1,5 @@
+<!-- This file is for AI assistant context. Not user documentation. -->
+
 # KayFlux — WWE Universe Mode Manager
 
 WWE 2K26 Universe Mode booking manager. Local Node.js app with SQLite database and REST API.

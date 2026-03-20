@@ -1,0 +1,26 @@
+{
+  "name": "kayflux-desktop",
+  "version": "1.0.0",
+  "description": "KayFlux — WWE Universe Mode Manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --config electron-builder.yml",
+    "build:win": "electron-builder --config electron-builder.yml --win",
+    "build:mac": "electron-builder --config electron-builder.yml --mac",
+    "build:linux": "electron-builder --config electron-builder.yml --linux",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "William Melton",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.0"
+  },
+  "build": {
+    "extends": null
+  }
+}

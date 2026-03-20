@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=380, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>KayFlux Settings</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .settings {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 28px 32px;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .settings h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #c9a84c;
+      margin-bottom: 4px;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .field input[type="number"] {
+      width: 80px;
+      padding: 6px 10px;
+      background: #1a1a1a;
+      border: 0.5px solid #333;
+      border-radius: 4px;
+      color: #e0e0e0;
+      font-size: 13px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      text-align: center;
+      outline: none;
+    }
+
+    .field input[type="number"]:focus {
+      border-color: #c9a84c;
+    }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle .slider {
+      position: absolute;
+      inset: 0;
+      background: #333;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle .slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: #888;
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle input:checked + .slider {
+      background: rgba(201, 168, 76, 0.3);
+    }
+
+    .toggle input:checked + .slider::before {
+      transform: translateX(18px);
+      background: #c9a84c;
+    }
+
+    .note {
+      font-size: 11px;
+      color: #555;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings">
+    <h2>Settings</h2>
+
+    <div class="field">
+      <label>Port</label>
+      <input type="number" id="port-input" min="1024" max="65535" value="3030">
+    </div>
+
+    <div class="field">
+      <label>Launch at login</label>
+      <label class="toggle">
+        <input type="checkbox" id="launch-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <button id="btn-save" class="btn-primary">Save</button>
+    <div class="note">Changes take effect on next server restart</div>
+  </div>
+
+  <script>
+    const portInput = document.getElementById('port-input');
+    const launchToggle = document.getElementById('launch-toggle');
+    const btnSave = document.getElementById('btn-save');
+
+    // Load current settings
+    window.kayflux.getSettings();
+    window.kayflux.onSettingsReply((settings) => {
+      portInput.value = settings.port;
+      launchToggle.checked = settings.launchAtLogin;
+    });
+
+    btnSave.addEventListener('click', () => {
+      const port = parseInt(portInput.value, 10);
+      if (port < 1024 || port > 65535 || isNaN(port)) {
+        portInput.style.borderColor = '#e34040';
+        return;
+      }
+      portInput.style.borderColor = '';
+      window.kayflux.saveSettings({
+        port,
+        launchAtLogin: launchToggle.checked
+      });
+      window.close();
+    });
+  </script>
+</body>
+</html>

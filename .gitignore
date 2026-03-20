@@ -26,4 +26,8 @@ Desktop.ini
 
 # Environment
 .env
-.env.*
+.env.local
+
+# Electron desktop build
+desktop/dist/
+desktop/node_modules/
