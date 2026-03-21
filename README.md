@@ -134,6 +134,9 @@ Set it up in a [Claude Project](https://claude.ai) with the MCP server connected
 ## Screenshots
 
 <!-- Add screenshots here -->
+<img width="304" height="208" alt="image" src="https://github.com/user-attachments/assets/f136e796-7136-4c22-bce4-c50bcf9e9518" />
+<img width="1568" height="659" alt="image" src="https://github.com/user-attachments/assets/6c82efbf-26cb-431c-9a67-730f978b6300" />
+<img width="277" height="171" alt="image" src="https://github.com/user-attachments/assets/807729ee-2739-45ca-a42c-5d7732a8ca13" />
 
 ---
 
