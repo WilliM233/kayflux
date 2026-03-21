@@ -100,6 +100,19 @@ db.exec("UPDATE brands SET color='#c8102e' WHERE id=3 AND color='Red'");
 db.exec("UPDATE brands SET color='#0066cc' WHERE id=1 AND color='Blue'");
 db.exec("UPDATE brands SET color='#e8c000' WHERE id=2 AND color='Yellow'");
 db.exec("UPDATE brands SET color='#7b2d8b' WHERE id=4 AND color='Purple'");
+// Recreate superstar_record view — Brawl matches excluded from W/L/D
+db.exec("DROP VIEW IF EXISTS superstar_record");
+db.exec(`CREATE VIEW superstar_record AS
+SELECT
+  s.id, s.name, s.brand_id, s.division,
+  COALESCE(SUM(CASE WHEN mp.result = 'win' AND COALESCE(m.win_method, '') != 'Brawl' THEN 1 ELSE 0 END), 0) AS wins,
+  COALESCE(SUM(CASE WHEN mp.result = 'loss' AND COALESCE(m.win_method, '') != 'Brawl' THEN 1 ELSE 0 END), 0) AS losses,
+  COALESCE(SUM(CASE WHEN mp.result = 'draw' AND COALESCE(m.win_method, '') != 'Brawl' THEN 1 ELSE 0 END), 0) AS draws,
+  COUNT(mp.id) AS total_matches
+FROM superstars s
+LEFT JOIN match_participants mp ON mp.superstar_id = s.id
+LEFT JOIN matches m ON m.id = mp.match_id
+GROUP BY s.id`);
 
 // ============================================================
 // BRANDS
