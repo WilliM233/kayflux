@@ -422,7 +422,7 @@ const MATCH_TYPE_OPTIONS = ['Singles', 'Tag Team', 'Triple Threat', 'Fatal 4-Way
 
 const MATCH_POSITION_OPTIONS = ['Pre-Show', 'Opening', 'Midcard', 'Co-Main Event', 'Main Event'];
 
-const WIN_METHOD_OPTIONS = ['Pinfall', 'Submission', 'DQ', 'Count-Out', 'KO', 'Forfeit', 'No Contest', 'Interference', 'Other'];
+const WIN_METHOD_OPTIONS = ['Pinfall', 'Submission', 'DQ', 'Count-Out', 'KO', 'TKO', 'Forfeit', 'No Contest', 'Brawl', 'Interference', 'Other'];
 
 const RIVALRY_STATUS_OPTIONS = ['Pending', 'Building', 'Active', 'Climax', 'Resolved', 'Concluded'];
 

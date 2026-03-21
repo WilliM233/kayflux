@@ -184,11 +184,13 @@ Use the REST API for all reads and writes. The API handles business logic (champ
   "winner_ids": [5],
   "loser_ids": [12],
   "draw_ids": [],
-  "win_method": "Pinfall|Submission|Count Out|DQ|No Contest",
+  "win_method": "Pinfall|Submission|Count Out|DQ|KO|TKO|Forfeit|No Contest|Brawl|Interference|Other",
   "rating": 4,
   "notes": "Clean finish after Curb Stomp"
 }
 ```
+
+> **Brawl** is an unsanctioned segment — it records a winner/aggressor for display but does **not** count toward W/L/D records.
 
 **Reorder:**
 ```json
