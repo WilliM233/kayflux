@@ -215,12 +215,13 @@ SELECT
   s.name,
   s.brand_id,
   s.division,
-  COALESCE(SUM(CASE WHEN mp.result = 'win' THEN 1 ELSE 0 END), 0) AS wins,
-  COALESCE(SUM(CASE WHEN mp.result = 'loss' THEN 1 ELSE 0 END), 0) AS losses,
-  COALESCE(SUM(CASE WHEN mp.result = 'draw' THEN 1 ELSE 0 END), 0) AS draws,
+  COALESCE(SUM(CASE WHEN mp.result = 'win' AND COALESCE(m.win_method, '') != 'Brawl' THEN 1 ELSE 0 END), 0) AS wins,
+  COALESCE(SUM(CASE WHEN mp.result = 'loss' AND COALESCE(m.win_method, '') != 'Brawl' THEN 1 ELSE 0 END), 0) AS losses,
+  COALESCE(SUM(CASE WHEN mp.result = 'draw' AND COALESCE(m.win_method, '') != 'Brawl' THEN 1 ELSE 0 END), 0) AS draws,
   COUNT(mp.id) AS total_matches
 FROM superstars s
 LEFT JOIN match_participants mp ON mp.superstar_id = s.id
+LEFT JOIN matches m ON m.id = mp.match_id
 GROUP BY s.id;
 
 -- ============================================================
